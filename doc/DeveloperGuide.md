@@ -47,6 +47,9 @@ Priority | As a ... | I want to ... | So that I can...
 `* * *` | user | find a person by name | locate details of persons without having to go through the entire list
 `* *` | user | hide [private contact details](#private-contact-detail) by default | to minimize chance of someone else seeing them by accident
 `*` | user with many persons in the address book | sort persons by name | locate a person easily
+`*` | user with many persons in the address book | sort persons by date added | locate a person easily
+`*` | user | find a person by any of his personal details | to locate a person without having to go through the entire list
+`*` | user with many separate work stations | save database to the cloud | access the addressbook from any of his work stations
 
 
 ## Appendix B : Use Cases
@@ -74,12 +77,44 @@ Use case ends.
 > 3a1. AddressBook shows an error message <br>
   Use case resumes at step 2
 
+#### Use case: Edit tag (Assume that AddressBook confirms the change with the user before carrying out the operation.)
+
+**MSS**
+
+1. User requests to list persons
+2. AddressBook shows a list of persons
+3. User requests to edit the tags of a specific person in the list
+4. AddressBook populates the CLI with the person's tags
+5. User edits the relevant tags and presses 'Enter'
+6. AddressBook shows the edited tags and confirms the changes with the user 
+7. User confirms the edits 
+8. AddressBook makes the edits 
+Use case ends.
+
+**Extensions**
+
+2a. The list of persons is empty
+
+> Use case ends
+
+3a. The given index is invalid
+
+> 3a1. AddressBook shows an error message <br>
+  Use case resumes at step 2
+  
+3b. The person has no tags 
+
+> 4a1. AddressBook does not populate CLI 
+> 4a2. Address book prompts user to add in new tags 
+  
 ## Appendix C : Non Functional Requirements
 
 1. Should work on any [mainstream OS](#mainstream-os) as long as it has Java 8 or higher installed.
 2. Should be able to hold up to 1000 persons.
 3. Should come with automated unit tests and open source code.
-4. Should favor DOS style commands over Unix-style commands
+4. Should favor DOS style commands over Unix-style commands.
+5. Should have small memory footprint.
+6. GUI should have easily readable colour scheme.
 
 ## Appendix D : Glossary
 
