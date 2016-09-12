@@ -1,10 +1,10 @@
 package seedu.addressbook.ui;
 
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import seedu.addressbook.commands.ExitCommand;
 import seedu.addressbook.logic.Logic;
 import seedu.addressbook.commands.CommandResult;
@@ -22,16 +22,20 @@ public class MainWindow {
 
     private Logic logic;
     private Stoppable mainApp;
+    private static boolean exitConfirmed;
+    private static Thread waiting; 
+    private static Stage s;
 
-    public MainWindow(){
+    public MainWindow() {
     }
 
-    public void setLogic(Logic logic){
+    public void setLogic(Logic logic) {
         this.logic = logic;
     }
 
-    public void setMainApp(Stoppable mainApp){
+    public void setMainApp(Stoppable mainApp) {
         this.mainApp = mainApp;
+        exitConfirmed = false;
     }
 
     @FXML
@@ -40,14 +44,14 @@ public class MainWindow {
     @FXML
     private TextField commandInput;
 
-
     @FXML
     void onCommand(ActionEvent event) {
         try {
             String userCommandText = commandInput.getText();
             CommandResult result = logic.execute(userCommandText);
-            if(isExitCommand(result)){
-                exitApp();
+            if (isExitCommand(result)) {
+                comfirmExit();
+                waitForExitConfirmation();
                 return;
             }
             displayResult(result);
@@ -58,8 +62,38 @@ public class MainWindow {
         }
     }
 
+    private void waitForExitConfirmation() {
+        waiting = new Thread(new Runnable() {
+            public void run() {
+                while (exitConfirmed) {
+                    try {
+                        exitApp();
+                    } catch (Exception e) {
+                        display(e.getMessage());
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
+
+    }
+
     private void exitApp() throws Exception {
         mainApp.stop();
+    }
+
+    private void comfirmExit() {
+        s = new Stage();
+        new PopupButton().start(s);
+    }
+
+    public static void callbackIfExit() {
+        exitConfirmed = true;
+        waiting.start();
+    }
+    
+    public static void callbackIfNoExit() {
+        s.close();
     }
 
     /** Returns true of the result given is the result of an exit command */
