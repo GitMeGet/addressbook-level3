@@ -24,6 +24,9 @@ public class EditCommand extends Command {
     public static final String MESSAGE_EDIT_PERSON_PROMPT = "Edit the following person: %1$s\n\n Press enter to confirm your edit";
     public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Person successfully edited: %1$s";
     
+    public static boolean isEditingPerson;
+    public static ReadOnlyPerson toRemove;
+    
     private MainWindow window;
     private ReadOnlyPerson target;
     
@@ -39,8 +42,8 @@ public class EditCommand extends Command {
             target = getTargetPerson();
             String personInfo = getPersonInfo();
             window.displayCommandInput(personInfo); 
-            window.setEditingPerson(true);
-            window.setToRemove(target);
+            isEditingPerson = true;
+            toRemove = target;
             return new CommandResult(String.format(MESSAGE_EDIT_PERSON_PROMPT, target));
 
         } catch (IndexOutOfBoundsException ie) {
@@ -58,10 +61,5 @@ public class EditCommand extends Command {
         }
         return personInfo;
     }
-
-    
-    
-    
-    
     
 }

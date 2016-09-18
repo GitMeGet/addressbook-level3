@@ -3,7 +3,6 @@ package seedu.addressbook.commands;
 import java.util.HashSet;
 import java.util.Set;
 
-import seedu.addressbook.Main;
 import seedu.addressbook.data.exception.IllegalValueException;
 import seedu.addressbook.data.person.Address;
 import seedu.addressbook.data.person.Email;
@@ -15,7 +14,6 @@ import seedu.addressbook.data.person.UniquePersonList;
 import seedu.addressbook.data.person.UniquePersonList.PersonNotFoundException;
 import seedu.addressbook.data.tag.Tag;
 import seedu.addressbook.data.tag.UniqueTagList;
-import seedu.addressbook.ui.MainWindow;
 
 /**
  * Adds a person to the address book.
@@ -34,9 +32,6 @@ public class AddCommand extends Command {
     public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book";
 
     private Person toAdd;
-    private ReadOnlyPerson toRemove;
-
-    private MainWindow window;
 
     /**
      * Convenience constructor using raw values.
@@ -59,10 +54,6 @@ public class AddCommand extends Command {
                 new Address(address, isAddressPrivate),
                 new UniqueTagList(tagSet)
         );
-        
-        window = Main.gui.getMainWindow();
-        toRemove = window.getToRemove();
-        
     }
 
     public AddCommand(Person toAdd) {
@@ -77,7 +68,7 @@ public class AddCommand extends Command {
     public CommandResult execute() {
         try {
             addressBook.addPerson(toAdd);
-            if (window.isEditingPerson()){
+            if (EditCommand.isEditingPerson){
                 editPersonHousekeeping();
                 return new CommandResult(String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, toAdd));
             }
@@ -93,9 +84,9 @@ public class AddCommand extends Command {
     }
     
     private void editPersonHousekeeping() throws PersonNotFoundException{
-        addressBook.removePerson(toRemove);
-        window.setEditingPerson(false);
-        window.setToRemove(null);
+        addressBook.removePerson(EditCommand.toRemove);
+        EditCommand.isEditingPerson = false;
+        EditCommand.toRemove = null;
     }
 
 }

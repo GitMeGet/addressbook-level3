@@ -12,7 +12,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
 import seedu.addressbook.commands.CommandResult;
 import seedu.addressbook.commands.EditCommand;
 import seedu.addressbook.commands.ExitCommand;
@@ -26,9 +25,6 @@ public class MainWindow {
 
     private Logic logic;
     private Stoppable mainApp;
-    
-    private boolean isEditingPerson;
-    private ReadOnlyPerson toRemove;
 
     public MainWindow(){
     }
@@ -51,7 +47,7 @@ public class MainWindow {
     void onCommand(ActionEvent event) {
         try {
             String userCommandText = commandInput.getText();
-            if(isEditingPerson){
+            if(EditCommand.isEditingPerson){
                 userCommandText = EditCommand.NEXT_COMMAND_WORD + " " + userCommandText;
             }
             CommandResult result = logic.execute(userCommandText);
@@ -60,7 +56,7 @@ public class MainWindow {
                 return;
             }
             displayResult(result);
-            if (!isEditingPerson){
+            if (!EditCommand.isEditingPerson){
                 clearCommandInput();
             }
         } catch (Exception e) {
@@ -120,22 +116,6 @@ public class MainWindow {
      */
     private void display(String... messages) {
         outputConsole.setText(outputConsole.getText() + new Formatter().format(messages));
-    }
-
-    public boolean isEditingPerson() {
-        return isEditingPerson;
-    }
-
-    public void setEditingPerson(boolean isEditingPerson) {
-        this.isEditingPerson = isEditingPerson;
-    }
-
-    public ReadOnlyPerson getToRemove() {
-        return toRemove;
-    }
-
-    public void setToRemove(ReadOnlyPerson toRemove) {
-        this.toRemove = toRemove;
     }
 
 }
