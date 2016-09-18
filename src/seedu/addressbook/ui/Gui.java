@@ -45,5 +45,9 @@ public class Gui {
         mainWindow.setMainApp(mainApp);
         return mainWindow;
     }
+    
+    public MainWindow getMainWindow(){
+        return mainWindow;
+    }
 
 }

@@ -1,19 +1,23 @@
 package seedu.addressbook.ui;
 
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import seedu.addressbook.commands.ExitCommand;
-import seedu.addressbook.logic.Logic;
-import seedu.addressbook.commands.CommandResult;
-import seedu.addressbook.data.person.ReadOnlyPerson;
+import static seedu.addressbook.common.Messages.MESSAGE_PROGRAM_LAUNCH_ARGS_USAGE;
+import static seedu.addressbook.common.Messages.MESSAGE_USING_STORAGE_FILE;
+import static seedu.addressbook.common.Messages.MESSAGE_WELCOME;
 
 import java.util.List;
 import java.util.Optional;
 
-import static seedu.addressbook.common.Messages.*;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
+import seedu.addressbook.commands.CommandResult;
+import seedu.addressbook.commands.EditCommand;
+import seedu.addressbook.commands.ExitCommand;
+import seedu.addressbook.data.person.ReadOnlyPerson;
+import seedu.addressbook.logic.Logic;
 
 /**
  * Main Window of the GUI.
@@ -22,6 +26,9 @@ public class MainWindow {
 
     private Logic logic;
     private Stoppable mainApp;
+    
+    private boolean isEditingPerson;
+    private ReadOnlyPerson toRemove;
 
     public MainWindow(){
     }
@@ -40,18 +47,22 @@ public class MainWindow {
     @FXML
     private TextField commandInput;
 
-
     @FXML
     void onCommand(ActionEvent event) {
         try {
             String userCommandText = commandInput.getText();
+            if(isEditingPerson){
+                userCommandText = EditCommand.NEXT_COMMAND_WORD + " " + userCommandText;
+            }
             CommandResult result = logic.execute(userCommandText);
             if(isExitCommand(result)){
                 exitApp();
                 return;
             }
             displayResult(result);
-            clearCommandInput();
+            if (!isEditingPerson){
+                clearCommandInput();
+            }
         } catch (Exception e) {
             display(e.getMessage());
             throw new RuntimeException(e);
@@ -75,6 +86,10 @@ public class MainWindow {
     /** Clears the output display area */
     public void clearOutputConsole(){
         outputConsole.clear();
+    }
+    
+    public void displayCommandInput(String text){
+        commandInput.setText(text);
     }
 
     /** Displays the result of a command execution to the user. */
@@ -105,6 +120,22 @@ public class MainWindow {
      */
     private void display(String... messages) {
         outputConsole.setText(outputConsole.getText() + new Formatter().format(messages));
+    }
+
+    public boolean isEditingPerson() {
+        return isEditingPerson;
+    }
+
+    public void setEditingPerson(boolean isEditingPerson) {
+        this.isEditingPerson = isEditingPerson;
+    }
+
+    public ReadOnlyPerson getToRemove() {
+        return toRemove;
+    }
+
+    public void setToRemove(ReadOnlyPerson toRemove) {
+        this.toRemove = toRemove;
     }
 
 }
